@@ -1,0 +1,63 @@
+@model IEnumerable<Product>
+
+<div class="page-shell">
+    <main class="card">
+        <header class="page-title">
+            <span class="box-icon">📦</span>
+            <h1>Products Management</h1>
+        </header>
+
+        <section class="panel">
+            <h2>Add New Product</h2>
+            <form asp-action="Create" method="post" class="product-form">
+                <div asp-validation-summary="ModelOnly" class="validation"></div>
+
+                <label for="Name">Product Name:</label>
+                <input id="Name" name="Name" type="text" required maxlength="120" />
+
+                <label for="Description">Description:</label>
+                <input id="Description" name="Description" type="text" required maxlength="500" />
+
+                <label for="Price">Price:</label>
+                <input id="Price" name="Price" type="number" min="0" step="0.01" required />
+
+                <button type="submit">Add Product</button>
+            </form>
+        </section>
+
+        @if (TempData["Success"] is string message)
+        {
+            <div class="success">@message</div>
+        }
+
+        <section class="products-section">
+            <h2>Products List</h2>
+
+            @if (!Model.Any())
+            {
+                <div class="empty">No products found.</div>
+            }
+            else
+            {
+                foreach (var product in Model)
+                {
+                    <article class="product-item">
+                        <div>
+                            <h3>@product.Name</h3>
+                            <p>@product.Description</p>
+                            <strong>$@product.Price.ToString("0.##")</strong>
+                        </div>
+                        <form asp-action="Delete" method="post" onsubmit="return confirm('Delete this product?');">
+                            <input type="hidden" name="id" value="@product.Id" />
+                            <button class="delete-btn" type="submit">Delete</button>
+                        </form>
+                    </article>
+                }
+            }
+        </section>
+    </main>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
